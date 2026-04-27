@@ -16,6 +16,9 @@ kotlin {
     jvmToolchain(21)
 }
 dependencies {
+    implementation("io.ktor:ktor-server-auth")
+    implementation("io.ktor:ktor-server-auth-jwt")
+    implementation("org.mindrot:jbcrypt:0.4")
     implementation("org.jetbrains.exposed:exposed-core:0.45.0")
     implementation("org.jetbrains.exposed:exposed-jdbc:0.45.0")
     implementation("org.postgresql:postgresql:42.6.0")
