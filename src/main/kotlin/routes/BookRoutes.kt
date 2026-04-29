@@ -15,6 +15,7 @@ import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.update
 import org.jetbrains.exposed.sql.transactions.transaction
 
 fun Application.bookRoutes() {
@@ -22,7 +23,6 @@ fun Application.bookRoutes() {
         authenticate("auth-jwt") {
             route("/books") {
 
-                // 1. ПОЛУЧИТЬ ВСЕ КНИГИ
                 get {
                     val principal = call.principal<JWTPrincipal>()
                     val userId = principal!!.payload.getClaim("userId").asInt()
@@ -42,7 +42,6 @@ fun Application.bookRoutes() {
                     call.respond(HttpStatusCode.OK, userBooks)
                 }
 
-                // 2. ДОБАВИТЬ КНИГУ
                 post {
                     val principal = call.principal<JWTPrincipal>()
                     val userId = principal!!.payload.getClaim("userId").asInt()
@@ -58,11 +57,40 @@ fun Application.bookRoutes() {
                             it[Books.userId] = userId
                         }[Books.id]
                     }
-
                     call.respond(HttpStatusCode.Created, mapOf("id" to newBookId))
                 }
 
-                // 3. УДАЛИТЬ КНИГУ (НОВОЕ!)
+                // НОВОЕ: ОБНОВЛЕНИЕ КНИГИ (PUT)
+                put("/{id}") {
+                    val principal = call.principal<JWTPrincipal>()
+                    val userId = principal!!.payload.getClaim("userId").asInt()
+                    val bookId = call.parameters["id"]?.toIntOrNull()
+
+                    if (bookId == null) {
+                        call.respond(HttpStatusCode.BadRequest, "Неверный ID книги")
+                        return@put
+                    }
+
+                    val request = call.receive<BookRequest>()
+
+                    val updatedRows = transaction {
+                        // Обновляем только если совпадает id книги и id пользователя
+                        Books.update({ (Books.id eq bookId) and (Books.userId eq userId) }) {
+                            it[title] = request.title
+                            it[author] = request.author
+                            it[genre] = request.genre
+                            it[rating] = request.rating
+                            it[review] = request.review
+                        }
+                    }
+
+                    if (updatedRows > 0) {
+                        call.respond(HttpStatusCode.OK, "Книга обновлена")
+                    } else {
+                        call.respond(HttpStatusCode.NotFound, "Книга не найдена")
+                    }
+                }
+
                 delete("/{id}") {
                     val principal = call.principal<JWTPrincipal>()
                     val userId = principal!!.payload.getClaim("userId").asInt()
