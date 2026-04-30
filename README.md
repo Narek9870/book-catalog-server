@@ -1,31 +1,26 @@
-# book-catalog-server
+#  Book Catalog - Backend (Ktor)
 
-This project was created using the [Ktor Project Generator](https://start.ktor.io).
+REST API сервер для мобильного клиент-серверного приложения "Каталог прочитанных книг".
 
-Here are some useful links to get you started:
- * [Ktor Documentation](https://ktor.io/docs/home.html)
- * [Ktor GitHub page](https://github.com/ktorio/ktor)
- * [Ktor Slack chat](https://app.slack.com/client/T09229ZC6/C0A974TJ9). [Request an invite](https://surveys.jetbrains.com/s3/kotlin-slack-sign-up).
+##  Технологии
+* **Язык:** Kotlin
+* **Фреймворк:** Ktor Server (Netty)
+* **База данных:** PostgreSQL (развернута в облаке Neon.tech)
+* **ORM:** JetBrains Exposed
+* **Аутентификация:** Собственная реализация на основе **JWT-токенов**
+* **Шифрование:** BCrypt (хэширование паролей)
 
+##  Реализованный функционал
+* Регистрация и Авторизация пользователей (выдача JWT-токенов).
+* Защита маршрутов с помощью `Authentication-JWT`.
+* Полный CRUD для книг:
+    * `POST /register` — регистрация
+    * `POST /login` — вход
+    * `GET /books` — получение списка книг конкретного пользователя
+    * `POST /books` — добавление новой книги
+    * `PUT /books/{id}` — обновление данных книги
+    * `DELETE /books/{id}` — удаление книги из базы
 
-## Features
-Here's a list of features included in this project:
-
-| Name | Description |
-|------|-------------|
-| [Content Negotiation](https://start.ktor.io/p/io.ktor/server-content-negotiation) | Provides automatic content conversion according to Content-Type and Accept headers |
-| [kotlinx.serialization](https://start.ktor.io/p/io.ktor/server-kotlinx-serialization) | Handles JSON serialization using kotlinx.serialization library |
-
-
-## Building & Running
-To build or run the project, use one of the following tasks:
-
-
-| Task | Description |
-|------|-------------|
-
-If the server starts successfully, you'll see the following output:
-```
-2024-12-04 14:32:45.584 [main] INFO  Application - Application started in 0.303 seconds.
-2024-12-04 14:32:45.682 [main] INFO  Application - Responding at http://0.0.0.0:8080
-```
+##  Запуск проекта
+По умолчанию сервер запускается на порту `8080`.
+Для переключения между локальной БД и удаленной облачной базой используйте файл `DatabaseFactory.kt`.
