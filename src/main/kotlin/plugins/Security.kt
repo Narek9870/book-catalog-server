@@ -1,4 +1,4 @@
-package com.example.plugins // или просто com.example, смотря где создашь
+package com.example.plugins
 
 import com.auth0.jwt.JWT
 import com.example.utils.JwtConfig
@@ -8,7 +8,7 @@ import io.ktor.server.auth.jwt.*
 
 fun Application.configureSecurity() {
     install(Authentication) {
-        jwt("auth-jwt") { // Название нашей стратегии защиты
+        jwt("auth-jwt") { // Название нашей защиты
             realm = "Book Catalog Server"
             verifier(
                 JWT.require(JwtConfig.algorithm)
