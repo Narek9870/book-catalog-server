@@ -5,21 +5,29 @@ import io.ktor.server.application.*
 import com.example.routes.authRoutes
 import com.example.routes.bookRoutes
 import com.example.plugins.configureSecurity
+import com.example.repository.BookRepository
+import com.example.repository.UserRepository
+import com.example.service.AuthService
 
 fun main(args: Array<String>) {
     io.ktor.server.netty.EngineMain.main(args)
 }
 
 fun Application.module() {
+    // 1. Инициализация БД
     DatabaseFactory.init()
 
-    // СНАЧАЛА включаем проверку токенов
-    configureSecurity()
+    // 2. Внедрение зависимостей
+    val userRepository = UserRepository()
+    val authService = AuthService(userRepository)
+    val bookRepository = BookRepository()
 
+    // 3. Плагины Ktor
+    configureSecurity()
     configureSerialization()
     configureRouting()
 
-    // Потом подключаем пути
-    authRoutes()
-    bookRoutes()
+    // 4. Подключение маршрутов
+    authRoutes(authService)
+    bookRoutes(bookRepository)
 }
