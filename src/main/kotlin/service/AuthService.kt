@@ -20,7 +20,7 @@ class AuthService(private val userRepository: UserRepository) {
 
         return Result.success(token)
     }
-
+// проверка
     suspend fun login(credentials: UserCredentials): Result<String> {
         val user = userRepository.findUserByEmail(credentials.email)
             ?: return Result.failure(Exception("Неверный email или пароль"))
