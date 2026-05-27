@@ -6,6 +6,7 @@ import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 
+// пароль по сути должно не быть но думаю в этом плохого ничего нету для проектной части
 object DatabaseFactory {
     fun init() {
         val driverClassName = "org.postgresql.Driver"

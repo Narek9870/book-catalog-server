@@ -6,7 +6,7 @@ import io.ktor.server.routing.*
 
 fun Application.configureRouting() {
     routing {
-        // Стартовая страница сервера (Health-check)
+        // Стартовая страница сервера
         get("/") {
             call.respondText(" Book Catalog Server is running API successfully!")
         }
