@@ -16,10 +16,10 @@ fun main(args: Array<String>) {
 }
 
 fun Application.module() {
-    // 1. Инициализация БД
+    //Инициализация БД
     DatabaseFactory.init()
 
-    // 2. Внедрение зависимостей
+    //Внедрение зависимостей
     val userRepository = UserRepository()
     val authService = AuthService(userRepository)
     val bookRepository = BookRepository()
@@ -29,12 +29,12 @@ fun Application.module() {
         level = Level.INFO
     }
 
-    // 3. Плагины Ktor
+    //Плагины Ktor
     configureSecurity()
     configureSerialization()
     configureRouting()
 
-    // 4. Подключение маршрутов
+    //Подключение маршрутов
     authRoutes(authService)
     bookRoutes(bookRepository)
 }
