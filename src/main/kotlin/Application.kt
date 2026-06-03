@@ -8,6 +8,8 @@ import com.example.plugins.configureSecurity
 import com.example.repository.BookRepository
 import com.example.repository.UserRepository
 import com.example.service.AuthService
+import io.ktor.server.plugins.calllogging.*
+import org.slf4j.event.Level
 
 fun main(args: Array<String>) {
     io.ktor.server.netty.EngineMain.main(args)
@@ -21,6 +23,11 @@ fun Application.module() {
     val userRepository = UserRepository()
     val authService = AuthService(userRepository)
     val bookRepository = BookRepository()
+
+    // Включаем логирование всех запросов в консоль
+    install(CallLogging) {
+        level = Level.INFO
+    }
 
     // 3. Плагины Ktor
     configureSecurity()
