@@ -2,6 +2,13 @@ package com.example.models
 
 import kotlinx.serialization.Serializable
 
+// Чистая модель пользователя (Без привязки к SQL-базе)
+data class User(
+    val id: Int,
+    val email: String,
+    val passwordHash: String
+)
+
 // Этот класс сервер ждет от Android (когда пользователь вводит данные)
 @Serializable
 data class UserCredentials(
@@ -14,6 +21,7 @@ data class UserCredentials(
 data class AuthResponse(
     val token: String
 )
+
 // Это Android присылает нам, когда хочет добавить книгу
 @Serializable
 data class BookRequest(

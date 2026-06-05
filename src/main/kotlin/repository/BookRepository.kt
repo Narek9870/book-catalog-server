@@ -7,8 +7,17 @@ import com.example.models.BookResponse
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
-class BookRepository {
-    suspend fun getAllBooksForUser(userId: Int): List<BookResponse> {
+// интерфейс(Слой Domain)
+interface BookRepository {
+    suspend fun getAllBooksForUser(userId: Int): List<BookResponse>
+    suspend fun addBook(userId: Int, request: BookRequest): Int
+    suspend fun updateBook(userId: Int, bookId: Int, request: BookRequest): Boolean
+    suspend fun deleteBook(userId: Int, bookId: Int): Boolean
+}
+
+// реализация(Слой Data)
+class BookRepositoryImpl : BookRepository {
+    override suspend fun getAllBooksForUser(userId: Int): List<BookResponse> {
         return dbQuery {
             Books.select { Books.userId eq userId }.map {
                 BookResponse(
@@ -23,7 +32,7 @@ class BookRepository {
         }
     }
 
-    suspend fun addBook(userId: Int, request: BookRequest): Int {
+    override suspend fun addBook(userId: Int, request: BookRequest): Int {
         return dbQuery {
             Books.insert {
                 it[title] = request.title
@@ -36,7 +45,7 @@ class BookRepository {
         }
     }
 
-    suspend fun updateBook(userId: Int, bookId: Int, request: BookRequest): Boolean {
+    override suspend fun updateBook(userId: Int, bookId: Int, request: BookRequest): Boolean {
         return dbQuery {
             val updatedRows = Books.update({ (Books.id eq bookId) and (Books.userId eq userId) }) {
                 it[title] = request.title
@@ -49,7 +58,7 @@ class BookRepository {
         }
     }
 
-    suspend fun deleteBook(userId: Int, bookId: Int): Boolean {
+    override suspend fun deleteBook(userId: Int, bookId: Int): Boolean {
         return dbQuery {
             val deletedRows = Books.deleteWhere { (Books.id eq bookId) and (Books.userId eq userId) }
             deletedRows > 0

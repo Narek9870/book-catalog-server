@@ -1,11 +1,11 @@
 package com.example.service
 
-import com.example.db.Users
 import com.example.models.UserCredentials
 import com.example.repository.UserRepository
 import com.example.utils.JwtConfig
 import org.mindrot.jbcrypt.BCrypt
 
+// Зависит от UserRepository, а не от базы данных
 class AuthService(private val userRepository: UserRepository) {
 
     suspend fun register(credentials: UserCredentials): Result<String> {
@@ -20,17 +20,19 @@ class AuthService(private val userRepository: UserRepository) {
 
         return Result.success(token)
     }
-// проверка
+
+    // проверка
     suspend fun login(credentials: UserCredentials): Result<String> {
         val user = userRepository.findUserByEmail(credentials.email)
             ?: return Result.failure(Exception("Неверный email или пароль"))
 
-        val passwordMatch = BCrypt.checkpw(credentials.password, user[Users.passwordHash])
+        // ТЕПЕРЬ СЕРВИС РАБОТАЕТ С ЧИСТОЙ МОДЕЛЬЮ (user.passwordHash)
+        val passwordMatch = BCrypt.checkpw(credentials.password, user.passwordHash)
         if (!passwordMatch) {
             return Result.failure(Exception("Неверный email или пароль"))
         }
 
-        val token = JwtConfig.generateToken(user[Users.id])
+        val token = JwtConfig.generateToken(user.id)
         return Result.success(token)
     }
 }
